@@ -1,0 +1,1566 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ALTIS Consulting - Plateforme de Formation</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-orange: #FF8C42;
+            --primary-blue: #5B9BD5;
+            --dark-bg: #0A0A0A;
+            --card-bg: #1A1A1A;
+            --text-light: #FFFFFF;
+            --text-gray: #CCCCCC;
+            --success: #28A745;
+            --danger: #DC3545;
+            --warning: #FFC107;
+            --border: #333333;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: var(--dark-bg);
+            color: var(--text-light);
+            min-height: 100vh;
+        }
+
+        /* Loading Screen */
+        #loadingScreen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--dark-bg);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
+        }
+
+        .loading-logo {
+            width: 200px;
+            margin-bottom: 2rem;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.7; transform: scale(0.95); }
+        }
+
+        .loading-bar {
+            width: 300px;
+            height: 4px;
+            background: var(--border);
+            border-radius: 2px;
+            overflow: hidden;
+        }
+
+        .loading-progress {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary-orange), var(--primary-blue));
+            width: 0%;
+            animation: loading 2s ease-in-out forwards;
+        }
+
+        @keyframes loading {
+            to { width: 100%; }
+        }
+
+        /* Login Screen */
+        #loginScreen {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(255, 140, 66, 0.1) 0%, rgba(91, 155, 213, 0.1) 100%),
+                        var(--dark-bg);
+            z-index: 9999;
+        }
+
+        .login-container {
+            max-width: 450px;
+            margin: 5% auto;
+            background: var(--card-bg);
+            border-radius: 20px;
+            padding: 3rem;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+        }
+
+        .login-logo {
+            width: 150px;
+            display: block;
+            margin: 0 auto 2rem;
+        }
+
+        .login-title {
+            text-align: center;
+            font-size: 1.8rem;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(135deg, var(--primary-orange), var(--primary-blue));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .login-subtitle {
+            text-align: center;
+            color: var(--text-gray);
+            margin-bottom: 2rem;
+            font-size: 0.9rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: var(--text-gray);
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 1rem;
+            background: var(--dark-bg);
+            border: 2px solid var(--border);
+            border-radius: 10px;
+            color: var(--text-light);
+            font-family: inherit;
+            transition: all 0.3s;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary-orange);
+            box-shadow: 0 0 0 3px rgba(255, 140, 66, 0.1);
+        }
+
+        .btn {
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: inherit;
+            font-size: 1rem;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary-orange), #FF6B00);
+            color: white;
+            width: 100%;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(255, 140, 66, 0.4);
+        }
+
+        .login-footer {
+            text-align: center;
+            margin-top: 2rem;
+            color: var(--text-gray);
+            font-size: 0.9rem;
+        }
+
+        .login-footer a {
+            color: var(--primary-orange);
+            text-decoration: none;
+        }
+
+        /* Main App Container */
+        #appContainer {
+            display: none;
+        }
+
+        /* Navbar */
+        .navbar {
+            background: var(--card-bg);
+            padding: 1rem 2rem;
+            box-shadow: 0 2px 20px rgba(0,0,0,0.3);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .nav-logo {
+            height: 50px;
+        }
+
+        .nav-menu {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+            align-items: center;
+        }
+
+        .nav-menu a {
+            color: var(--text-gray);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        .nav-menu a:hover,
+        .nav-menu a.active {
+            color: var(--primary-orange);
+        }
+
+        .user-menu {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .role-badge {
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .role-admin {
+            background: linear-gradient(135deg, var(--danger), #c82333);
+        }
+
+        .role-instructor {
+            background: linear-gradient(135deg, var(--primary-blue), #4a8bc2);
+        }
+
+        .role-student {
+            background: linear-gradient(135deg, var(--success), #1e7e34);
+        }
+
+        .user-avatar {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary-orange), var(--primary-blue));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            cursor: pointer;
+            font-size: 1.1rem;
+        }
+
+        /* Container */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        /* Dashboard */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 260px 1fr;
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 1.5rem;
+            height: fit-content;
+            border: 1px solid var(--border);
+        }
+
+        .sidebar-menu {
+            list-style: none;
+        }
+
+        .sidebar-menu li {
+            margin-bottom: 0.5rem;
+        }
+
+        .sidebar-menu a {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 1rem;
+            color: var(--text-gray);
+            text-decoration: none;
+            border-radius: 10px;
+            transition: all 0.3s;
+            font-weight: 500;
+        }
+
+        .sidebar-menu a:hover,
+        .sidebar-menu a.active {
+            background: linear-gradient(135deg, var(--primary-orange), #FF6B00);
+            color: white;
+        }
+
+        /* Main Content */
+        .main-content {
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 2rem;
+            border: 1px solid var(--border);
+            min-height: 600px;
+        }
+
+        .page-section {
+            display: none;
+        }
+
+        .page-section.active {
+            display: block;
+            animation: fadeIn 0.3s;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .page-header {
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid var(--border);
+        }
+
+        .page-title {
+            font-size: 2rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--primary-orange), var(--primary-blue));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .page-subtitle {
+            color: var(--text-gray);
+            margin-top: 0.5rem;
+        }
+
+        /* Stats Cards */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, rgba(255, 140, 66, 0.1), rgba(91, 155, 213, 0.1));
+            padding: 1.5rem;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+        }
+
+        .stat-icon {
+            font-size: 2rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--primary-orange);
+        }
+
+        .stat-label {
+            color: var(--text-gray);
+            font-size: 0.9rem;
+        }
+
+        /* Course Grid */
+        .course-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .course-card {
+            background: var(--dark-bg);
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid var(--border);
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .course-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(255, 140, 66, 0.2);
+            border-color: var(--primary-orange);
+        }
+
+        .course-thumbnail {
+            width: 100%;
+            height: 180px;
+            background: linear-gradient(135deg, var(--primary-orange), var(--primary-blue));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            position: relative;
+        }
+
+        .course-badge {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            background: rgba(0,0,0,0.7);
+            backdrop-filter: blur(10px);
+        }
+
+        .course-content {
+            padding: 1.5rem;
+        }
+
+        .course-category {
+            display: inline-block;
+            background: rgba(255, 140, 66, 0.2);
+            color: var(--primary-orange);
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+        }
+
+        .course-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .course-description {
+            color: var(--text-gray);
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+        }
+
+        .course-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 1rem;
+            border-top: 1px solid var(--border);
+        }
+
+        .course-duration {
+            color: var(--text-gray);
+            font-size: 0.85rem;
+        }
+
+        .course-price {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary-orange);
+        }
+
+        .course-actions {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        .btn-sm {
+            padding: 0.5rem 1rem;
+            font-size: 0.85rem;
+        }
+
+        .btn-success {
+            background: var(--success);
+            color: white;
+        }
+
+        .btn-info {
+            background: var(--primary-blue);
+            color: white;
+        }
+
+        /* Webinar Section */
+        .webinar-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .webinar-player {
+            background: #000;
+            border-radius: 12px;
+            overflow: hidden;
+            margin-bottom: 2rem;
+            position: relative;
+            padding-top: 56.25%;
+            border: 2px solid var(--border);
+        }
+
+        .webinar-iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        .recording-indicator {
+            position: absolute;
+            top: 1rem;
+            left: 1rem;
+            background: var(--danger);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            display: none;
+            animation: blink 2s infinite;
+        }
+
+        .recording-indicator.active {
+            display: block;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .webinar-controls {
+            background: var(--dark-bg);
+            padding: 1.5rem;
+            border-radius: 12px;
+            margin-bottom: 1.5rem;
+            border: 1px solid var(--border);
+        }
+
+        .control-buttons {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        /* Replay Library */
+        .replay-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .replay-card {
+            background: var(--dark-bg);
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid var(--border);
+        }
+
+        .replay-thumbnail {
+            width: 100%;
+            height: 200px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 4rem;
+            position: relative;
+        }
+
+        .play-overlay {
+            position: absolute;
+            width: 60px;
+            height: 60px;
+            background: rgba(255,255,255,0.9);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .play-overlay:hover {
+            transform: scale(1.1);
+            background: white;
+        }
+
+        .replay-info {
+            padding: 1.5rem;
+        }
+
+        .replay-date {
+            color: var(--text-gray);
+            font-size: 0.85rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .replay-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+        }
+
+        .replay-stats {
+            display: flex;
+            gap: 1.5rem;
+            color: var(--text-gray);
+            font-size: 0.9rem;
+        }
+
+        /* Admin Panel */
+        .admin-tabs {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            border-bottom: 2px solid var(--border);
+        }
+
+        .admin-tab {
+            padding: 1rem 1.5rem;
+            background: none;
+            border: none;
+            color: var(--text-gray);
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+            border-bottom: 3px solid transparent;
+        }
+
+        .admin-tab.active {
+            color: var(--primary-orange);
+            border-bottom-color: var(--primary-orange);
+        }
+
+        .admin-section {
+            display: none;
+        }
+
+        .admin-section.active {
+            display: block;
+        }
+
+        /* Data Table */
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+        }
+
+        .data-table th {
+            background: var(--dark-bg);
+            padding: 1rem;
+            text-align: left;
+            font-weight: 600;
+            border-bottom: 2px solid var(--border);
+        }
+
+        .data-table td {
+            padding: 1rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .data-table tr:hover {
+            background: rgba(255, 140, 66, 0.05);
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .status-active {
+            background: rgba(40, 167, 69, 0.2);
+            color: var(--success);
+        }
+
+        .status-pending {
+            background: rgba(255, 193, 7, 0.2);
+            color: var(--warning);
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            z-index: 9998;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 2rem;
+            max-width: 600px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            border: 1px solid var(--border);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid var(--border);
+        }
+
+        .modal-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            color: var(--text-gray);
+            font-size: 2rem;
+            cursor: pointer;
+            line-height: 1;
+        }
+
+        /* Notifications */
+        .notification {
+            position: fixed;
+            top: 80px;
+            right: 20px;
+            background: var(--card-bg);
+            padding: 1rem 1.5rem;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            border: 1px solid var(--border);
+            z-index: 9999;
+            animation: slideIn 0.3s;
+            min-width: 300px;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        .notification.success {
+            border-left: 4px solid var(--success);
+        }
+
+        .notification.error {
+            border-left: 4px solid var(--danger);
+        }
+
+        .notification.info {
+            border-left: 4px solid var(--primary-blue);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .sidebar {
+                display: none;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .course-grid,
+            .replay-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .nav-menu {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Loading Screen -->
+    <div id="loadingScreen">
+        <img src="altis-logo.png" alt="ALTIS Logo" class="loading-logo" id="loadingLogo">
+        <div class="loading-bar">
+            <div class="loading-progress"></div>
+        </div>
+    </div>
+
+    <!-- Login Screen -->
+    <div id="loginScreen">
+        <div class="login-container">
+            <img src="altis-logo.png" alt="ALTIS Logo" class="login-logo">
+            <h1 class="login-title">Bienvenue sur ALTIS</h1>
+            <p class="login-subtitle">Plateforme de Formation Humanitaire</p>
+            
+            <form id="loginForm" onsubmit="handleLogin(event)">
+                <div class="form-group">
+                    <label class="form-label">Email</label>
+                    <input type="email" class="form-control" id="loginEmail" placeholder="votre@email.com" required>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Mot de passe</label>
+                    <input type="password" class="form-control" id="loginPassword" placeholder="••••••••" required>
+                </div>
+                
+                <button type="submit" class="btn btn-primary">Se connecter</button>
+            </form>
+            
+            <div class="login-footer">
+                <p>Pas encore de compte ? <a href="#" onclick="showRegister()">S'inscrire</a></p>
+                <p style="margin-top: 1rem; font-size: 0.8rem;">Admin: altisconsulting.cabinet@gmail.com</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main App -->
+    <div id="appContainer">
+        <!-- Navbar -->
+        <nav class="navbar">
+            <img src="altis-logo.png" alt="ALTIS Logo" class="nav-logo">
+            <ul class="nav-menu">
+                <li><a href="#" class="active" onclick="showSection('dashboard')">Tableau de bord</a></li>
+                <li><a href="#" onclick="showSection('formations')">Formations</a></li>
+                <li><a href="#" onclick="showSection('webinaires')">Webinaires Live</a></li>
+                <li><a href="#" onclick="showSection('replays')">Replays</a></li>
+                <li><a href="#" onclick="showSection('masterclass')">Masterclass</a></li>
+            </ul>
+            <div class="user-menu">
+                <span class="role-badge" id="userRoleBadge">Étudiant</span>
+                <div class="user-avatar" onclick="showUserMenu()" id="userAvatar">AC</div>
+            </div>
+        </nav>
+
+        <div class="container">
+            <div class="dashboard-grid">
+                <!-- Sidebar -->
+                <aside class="sidebar">
+                    <ul class="sidebar-menu">
+                        <li>
+                            <a href="#" class="active" onclick="showSection('dashboard')">
+                                📊 Tableau de bord
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#" onclick="showSection('formations')">
+                                📚 Mes Formations
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#" onclick="showSection('webinaires')">
+                                🎥 Webinaires Live
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#" onclick="showSection('replays')">
+                                📹 Bibliothèque Replays
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#" onclick="showSection('masterclass')">
+                                ⭐ Masterclass
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#" onclick="showSection('certificates')">
+                                🏆 Certificats
+                            </a>
+                        </li>
+                        <li id="adminMenuItem" style="display: none;">
+                            <a href="#" onclick="showSection('admin')">
+                                ⚙️ Administration
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#" onclick="logout()">
+                                🚪 Déconnexion
+                            </a>
+                        </li>
+                    </ul>
+                </aside>
+
+                <!-- Main Content -->
+                <main class="main-content">
+                    <!-- Dashboard Section -->
+                    <div id="dashboard" class="page-section active">
+                        <div class="page-header">
+                            <h1 class="page-title">Tableau de bord</h1>
+                            <p class="page-subtitle">Bienvenue sur votre espace ALTIS</p>
+                        </div>
+                        
+                        <div class="stats-grid">
+                            <div class="stat-card">
+                                <div class="stat-icon">📚</div>
+                                <div class="stat-value" id="statCourses">12</div>
+                                <div class="stat-label">Formations disponibles</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-icon">✅</div>
+                                <div class="stat-value" id="statCompleted">5</div>
+                                <div class="stat-label">Formations complétées</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-icon">🎥</div>
+                                <div class="stat-value" id="statWebinars">3</div>
+                                <div class="stat-label">Webinaires à venir</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-icon">📹</div>
+                                <div class="stat-value" id="statReplays">28</div>
+                                <div class="stat-label">Replays disponibles</div>
+                            </div>
+                        </div>
+
+                        <h2 style="margin: 2rem 0 1rem;">Formations recommandées</h2>
+                        <div class="course-grid" id="dashboardCourses">
+                            <!-- Courses will be populated here -->
+                        </div>
+                    </div>
+
+                    <!-- Formations Section -->
+                    <div id="formations" class="page-section">
+                        <div class="page-header">
+                            <h1 class="page-title">Toutes les Formations</h1>
+                            <p class="page-subtitle">50 formations humanitaires certifiantes</p>
+                        </div>
+                        
+                        <div class="course-grid" id="allCourses">
+                            <!-- All courses will be populated here -->
+                        </div>
+                    </div>
+
+                    <!-- Webinaires Section -->
+                    <div id="webinaires" class="page-section">
+                        <div class="page-header">
+                            <h1 class="page-title">Webinaire en Direct</h1>
+                            <p class="page-subtitle">Session live avec enregistrement automatique</p>
+                        </div>
+                        
+                        <div class="webinar-container">
+                            <div class="webinar-player">
+                                <div class="recording-indicator" id="recordingIndicator">
+                                    🔴 ENREGISTREMENT EN COURS
+                                </div>
+                                <iframe 
+                                    class="webinar-iframe" 
+                                    src="about:blank" 
+                                    id="webinarFrame"
+                                    allow="camera; microphone; fullscreen; display-capture"
+                                ></iframe>
+                            </div>
+
+                            <div class="webinar-controls">
+                                <h3 style="margin-bottom: 1rem;">Contrôles du webinaire</h3>
+                                <div class="control-buttons">
+                                    <button class="btn btn-success" onclick="joinWebinar()">
+                                        🎥 Rejoindre le webinaire
+                                    </button>
+                                    <button class="btn btn-primary" onclick="toggleRecording()">
+                                        ⏺️ <span id="recordBtnText">Démarrer l'enregistrement</span>
+                                    </button>
+                                    <button class="btn btn-info" onclick="toggleMic()">
+                                        🎤 Micro
+                                    </button>
+                                    <button class="btn btn-info" onclick="toggleCamera()">
+                                        📹 Caméra
+                                    </button>
+                                    <button class="btn" style="background: var(--warning);" onclick="shareScreen()">
+                                        🖥️ Partager l'écran
+                                    </button>
+                                    <button class="btn" style="background: var(--danger);" onclick="leaveWebinar()">
+                                        🚪 Quitter
+                                    </button>
+                                </div>
+                                <div style="margin-top: 1.5rem;">
+                                    <p style="color: var(--text-gray); margin-bottom: 0.5rem;">
+                                        <strong>Participants:</strong> <span id="participantCount">0</span> / 1000
+                                    </p>
+                                    <p style="color: var(--text-gray);">
+                                        <strong>Durée:</strong> <span id="sessionDuration">00:00:00</span>
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Replays Section -->
+                    <div id="replays" class="page-section">
+                        <div class="page-header">
+                            <h1 class="page-title">Bibliothèque de Replays</h1>
+                            <p class="page-subtitle">Accédez à tous les webinaires et formations enregistrés</p>
+                        </div>
+                        
+                        <div class="replay-grid" id="replayGrid">
+                            <!-- Replays will be populated here -->
+                        </div>
+                    </div>
+
+                    <!-- Masterclass Section -->
+                    <div id="masterclass" class="page-section">
+                        <div class="page-header">
+                            <h1 class="page-title">Masterclass Premium</h1>
+                            <p class="page-subtitle">Formations avancées avec experts internationaux</p>
+                        </div>
+                        
+                        <div class="course-grid" id="masterclassGrid">
+                            <!-- Masterclasses will be populated here -->
+                        </div>
+                    </div>
+
+                    <!-- Certificates Section -->
+                    <div id="certificates" class="page-section">
+                        <div class="page-header">
+                            <h1 class="page-title">Mes Certificats</h1>
+                            <p class="page-subtitle">Certificats internationaux obtenus</p>
+                        </div>
+                        
+                        <div class="course-grid" id="certificatesGrid">
+                            <!-- Certificates will be populated here -->
+                        </div>
+                    </div>
+
+                    <!-- Admin Section -->
+                    <div id="admin" class="page-section">
+                        <div class="page-header">
+                            <h1 class="page-title">Panneau d'Administration</h1>
+                            <p class="page-subtitle">Gestion complète de la plateforme</p>
+                        </div>
+
+                        <div class="admin-tabs">
+                            <button class="admin-tab active" onclick="showAdminTab('users')">👥 Utilisateurs</button>
+                            <button class="admin-tab" onclick="showAdminTab('courses')">📚 Formations</button>
+                            <button class="admin-tab" onclick="showAdminTab('webinars')">🎥 Webinaires</button>
+                            <button class="admin-tab" onclick="showAdminTab('recordings')">📹 Enregistrements</button>
+                            <button class="admin-tab" onclick="showAdminTab('analytics')">📊 Statistiques</button>
+                        </div>
+
+                        <div id="adminUsers" class="admin-section active">
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 1.5rem;">
+                                <h3>Gestion des Utilisateurs</h3>
+                                <button class="btn btn-primary btn-sm" onclick="showModal('addUser')">
+                                    + Ajouter un utilisateur
+                                </button>
+                            </div>
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Nom</th>
+                                        <th>Email</th>
+                                        <th>Rôle</th>
+                                        <th>Statut</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="usersTableBody">
+                                    <!-- Users will be populated here -->
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <div id="adminCourses" class="admin-section">
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 1.5rem;">
+                                <h3>Gestion des Formations</h3>
+                                <button class="btn btn-primary btn-sm" onclick="showModal('addCourse')">
+                                    + Ajouter une formation
+                                </button>
+                            </div>
+                            <!-- Course management content -->
+                        </div>
+
+                        <div id="adminWebinars" class="admin-section">
+                            <h3 style="margin-bottom: 1.5rem;">Webinaires Programmés</h3>
+                            <!-- Webinar management content -->
+                        </div>
+
+                        <div id="adminRecordings" class="admin-section">
+                            <h3 style="margin-bottom: 1.5rem;">Tous les Enregistrements</h3>
+                            <div class="replay-grid" id="adminRecordingsGrid">
+                                <!-- All recordings will be shown here -->
+                            </div>
+                        </div>
+
+                        <div id="adminAnalytics" class="admin-section">
+                            <h3 style="margin-bottom: 1.5rem;">Statistiques de la Plateforme</h3>
+                            <div class="stats-grid">
+                                <div class="stat-card">
+                                    <div class="stat-icon">👥</div>
+                                    <div class="stat-value">1,247</div>
+                                    <div class="stat-label">Utilisateurs inscrits</div>
+                                </div>
+                                <div class="stat-card">
+                                    <div class="stat-icon">📚</div>
+                                    <div class="stat-value">50</div>
+                                    <div class="stat-label">Formations actives</div>
+                                </div>
+                                <div class="stat-card">
+                                    <div class="stat-icon">📹</div>
+                                    <div class="stat-value">143</div>
+                                    <div class="stat-label">Enregistrements totaux</div>
+                                </div>
+                                <div class="stat-card">
+                                    <div class="stat-icon">💰</div>
+                                    <div class="stat-value">$45,890</div>
+                                    <div class="stat-label">Revenus ce mois</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </main>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal for adding users/courses -->
+    <div id="modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title" id="modalTitle">Modal Title</h2>
+                <button class="modal-close" onclick="closeModal()">&times;</button>
+            </div>
+            <div id="modalBody">
+                <!-- Modal content will be dynamically inserted -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Global Variables
+        let currentUser = null;
+        let isRecording = false;
+        let sessionStartTime = null;
+        let durationInterval = null;
+        let isWebinarActive = false;
+
+        // Initialize App
+        window.addEventListener('load', function() {
+            setTimeout(() => {
+                document.getElementById('loadingScreen').style.display = 'none';
+                document.getElementById('loginScreen').style.display = 'flex';
+                loadCourses();
+                loadReplays();
+            }, 2000);
+        });
+
+        // Authentication
+        function handleLogin(event) {
+            event.preventDefault();
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+
+            // Check if admin
+            if (email === 'altisconsulting.cabinet@gmail.com') {
+                currentUser = {
+                    email: email,
+                    name: 'Administrateur ALTIS',
+                    role: 'admin',
+                    initials: 'AC'
+                };
+            } else {
+                currentUser = {
+                    email: email,
+                    name: email.split('@')[0],
+                    role: 'student',
+                    initials: email.substring(0, 2).toUpperCase()
+                };
+            }
+
+            document.getElementById('loginScreen').style.display = 'none';
+            document.getElementById('appContainer').style.display = 'block';
+            
+            updateUserInterface();
+            showNotification('Connexion réussie ! Bienvenue ' + currentUser.name, 'success');
+        }
+
+        function updateUserInterface() {
+            document.getElementById('userAvatar').textContent = currentUser.initials;
+            
+            const roleBadge = document.getElementById('userRoleBadge');
+            if (currentUser.role === 'admin') {
+                roleBadge.textContent = 'Administrateur';
+                roleBadge.className = 'role-badge role-admin';
+                document.getElementById('adminMenuItem').style.display = 'block';
+            } else if (currentUser.role === 'instructor') {
+                roleBadge.textContent = 'Formateur';
+                roleBadge.className = 'role-badge role-instructor';
+            } else {
+                roleBadge.textContent = 'Étudiant';
+                roleBadge.className = 'role-badge role-student';
+            }
+        }
+
+        function logout() {
+            if (confirm('Êtes-vous sûr de vouloir vous déconnecter ?')) {
+                currentUser = null;
+                document.getElementById('appContainer').style.display = 'none';
+                document.getElementById('loginScreen').style.display = 'flex';
+                document.getElementById('loginForm').reset();
+                showNotification('Déconnexion réussie', 'info');
+            }
+        }
+
+        // Navigation
+        function showSection(sectionId) {
+            document.querySelectorAll('.page-section').forEach(section => {
+                section.classList.remove('active');
+            });
+            document.getElementById(sectionId).classList.add('active');
+
+            document.querySelectorAll('.sidebar-menu a').forEach(link => {
+                link.classList.remove('active');
+            });
+        }
+
+        // Load Courses
+        function loadCourses() {
+            const courses = [
+                { id: 1, title: 'Logistique Médicale Humanitaire', category: 'Logistique', duration: '5 jours', price: 800, icon: '📦', badge: 'Populaire' },
+                { id: 2, title: 'Coordination Humanitaire', category: 'Coordination', duration: '4 jours', price: 750, icon: '🤝', badge: 'Nouveau' },
+                { id: 3, title: 'Protection de l\'Enfance', category: 'Protection', duration: '3 jours', price: 600, icon: '👶', badge: '' },
+                { id: 4, title: 'WASH en Urgence', category: 'WASH', duration: '4 jours', price: 700, icon: '💧', badge: 'Populaire' },
+                { id: 5, title: 'Nutrition d\'Urgence', category: 'Santé', duration: '5 jours', price: 850, icon: '🥗', badge: '' },
+                { id: 6, title: 'Gestion de Projets', category: 'Management', duration: '6 jours', price: 900, icon: '📊', badge: 'Nouveau' }
+            ];
+
+            const dashboardCourses = document.getElementById('dashboardCourses');
+            const allCourses = document.getElementById('allCourses');
+            
+            courses.forEach(course => {
+                const card = createCourseCard(course);
+                dashboardCourses.appendChild(card.cloneNode(true));
+                allCourses.appendChild(card.cloneNode(true));
+            });
+
+            // Load Masterclass
+            const masterclasses = [
+                { id: 101, title: 'Leadership en Crise Humanitaire', category: 'Premium', duration: '7 jours', price: 1200, icon: '⭐', badge: 'Masterclass' },
+                { id: 102, title: 'Gestion Multi-Pays', category: 'Premium', duration: '10 jours', price: 1500, icon: '🌍', badge: 'Masterclass' }
+            ];
+
+            const masterclassGrid = document.getElementById('masterclassGrid');
+            masterclasses.forEach(course => {
+                masterclassGrid.appendChild(createCourseCard(course));
+            });
+        }
+
+        function createCourseCard(course) {
+            const card = document.createElement('div');
+            card.className = 'course-card';
+            card.innerHTML = `
+                <div class="course-thumbnail">
+                    ${course.badge ? `<span class="course-badge">${course.badge}</span>` : ''}
+                    ${course.icon}
+                </div>
+                <div class="course-content">
+                    <span class="course-category">${course.category}</span>
+                    <h3 class="course-title">${course.title}</h3>
+                    <div class="course-meta">
+                        <span class="course-duration">⏱️ ${course.duration}</span>
+                        <span class="course-price">$${course.price}</span>
+                    </div>
+                    <div class="course-actions">
+                        <button class="btn btn-success btn-sm" onclick="enrollCourse(${course.id})">
+                            S'inscrire
+                        </button>
+                        <button class="btn btn-info btn-sm" onclick="viewCourseDetails(${course.id})">
+                            Détails
+                        </button>
+                    </div>
+                </div>
+            `;
+            return card;
+        }
+
+        // Load Replays
+        function loadReplays() {
+            const replays = [
+                { id: 1, title: 'Introduction à la Logistique Humanitaire', date: '2025-02-20', duration: '2h 15min', views: 342 },
+                { id: 2, title: 'Coordination Multi-Acteurs', date: '2025-02-18', duration: '1h 45min', views: 256 },
+                { id: 3, title: 'Gestion de Crise', date: '2025-02-15', duration: '3h 00min', views: 489 },
+                { id: 4, title: 'WASH dans les Camps', date: '2025-02-12', duration: '2h 30min', views: 201 }
+            ];
+
+            const replayGrid = document.getElementById('replayGrid');
+            const adminRecordingsGrid = document.getElementById('adminRecordingsGrid');
+
+            replays.forEach(replay => {
+                const card = createReplayCard(replay);
+                replayGrid.appendChild(card.cloneNode(true));
+                if (adminRecordingsGrid) {
+                    adminRecordingsGrid.appendChild(card.cloneNode(true));
+                }
+            });
+        }
+
+        function createReplayCard(replay) {
+            const card = document.createElement('div');
+            card.className = 'replay-card';
+            card.innerHTML = `
+                <div class="replay-thumbnail">
+                    🎥
+                    <div class="play-overlay" onclick="playReplay(${replay.id})">
+                        ▶️
+                    </div>
+                </div>
+                <div class="replay-info">
+                    <div class="replay-date">📅 ${replay.date}</div>
+                    <h3 class="replay-title">${replay.title}</h3>
+                    <div class="replay-stats">
+                        <span>⏱️ ${replay.duration}</span>
+                        <span>👁️ ${replay.views} vues</span>
+                    </div>
+                </div>
+            `;
+            return card;
+        }
+
+        // Webinar Functions
+        function joinWebinar() {
+            if (!isWebinarActive) {
+                const roomName = 'altis-formation-' + Date.now();
+                document.getElementById('webinarFrame').src = 'https://meet.jit.si/' + roomName;
+                isWebinarActive = true;
+                sessionStartTime = Date.now();
+                startDurationTimer();
+                showNotification('Vous avez rejoint le webinaire !', 'success');
+                
+                // Simulate participant count
+                updateParticipantCount();
+            }
+        }
+
+        function leaveWebinar() {
+            if (isWebinarActive && confirm('Êtes-vous sûr de vouloir quitter le webinaire ?')) {
+                document.getElementById('webinarFrame').src = 'about:blank';
+                isWebinarActive = false;
+                if (isRecording) {
+                    toggleRecording();
+                }
+                stopDurationTimer();
+                showNotification('Vous avez quitté le webinaire', 'info');
+            }
+        }
+
+        function toggleRecording() {
+            if (!isWebinarActive) {
+                showNotification('Veuillez d\'abord rejoindre le webinaire', 'error');
+                return;
+            }
+
+            isRecording = !isRecording;
+            const indicator = document.getElementById('recordingIndicator');
+            const btnText = document.getElementById('recordBtnText');
+
+            if (isRecording) {
+                indicator.classList.add('active');
+                btnText.textContent = 'Arrêter l\'enregistrement';
+                showNotification('🔴 Enregistrement démarré - Le replay sera automatiquement sauvegardé', 'success');
+                
+                // Simulate saving recording
+                setTimeout(() => {
+                    if (isRecording) {
+                        saveRecording();
+                    }
+                }, 5000);
+            } else {
+                indicator.classList.remove('active');
+                btnText.textContent = 'Démarrer l\'enregistrement';
+                showNotification('Enregistrement arrêté et sauvegardé', 'info');
+            }
+        }
+
+        function saveRecording() {
+            // Simulate saving to database/storage
+            const recording = {
+                id: Date.now(),
+                title: 'Webinaire - ' + new Date().toLocaleDateString('fr-FR'),
+                date: new Date().toISOString().split('T')[0],
+                duration: document.getElementById('sessionDuration').textContent,
+                views: 0
+            };
+
+            showNotification('✅ Enregistrement sauvegardé dans la bibliothèque de replays', 'success');
+            
+            // Add to replays
+            const replayGrid = document.getElementById('replayGrid');
+            const newCard = createReplayCard(recording);
+            replayGrid.insertBefore(newCard, replayGrid.firstChild);
+        }
+
+        function toggleMic() {
+            showNotification('Microphone basculé', 'info');
+        }
+
+        function toggleCamera() {
+            showNotification('Caméra basculée', 'info');
+        }
+
+        function shareScreen() {
+            showNotification('Partage d\'écran activé', 'info');
+        }
+
+        function startDurationTimer() {
+            durationInterval = setInterval(() => {
+                const elapsed = Date.now() - sessionStartTime;
+                const hours = Math.floor(elapsed / 3600000);
+                const minutes = Math.floor((elapsed % 3600000) / 60000);
+                const seconds = Math.floor((elapsed % 60000) / 1000);
+                
+                document.getElementById('sessionDuration').textContent = 
+                    `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+            }, 1000);
+        }
+
+        function stopDurationTimer() {
+            if (durationInterval) {
+                clearInterval(durationInterval);
+                durationInterval = null;
+            }
+            document.getElementById('sessionDuration').textContent = '00:00:00';
+        }
+
+        function updateParticipantCount() {
+            let count = Math.floor(Math.random() * 50) + 1;
+            document.getElementById('participantCount').textContent = count;
+            
+            if (isWebinarActive) {
+                setTimeout(() => {
+                    count += Math.floor(Math.random() * 5);
+                    document.getElementById('participantCount').textContent = Math.min(count, 1000);
+                    if (isWebinarActive) {
+                        updateParticipantCount();
+                    }
+                }, 5000);
+            }
+        }
+
+        // Replay Functions
+        function playReplay(replayId) {
+            showNotification('Lecture du replay en cours...', 'info');
+            // In production, this would open the video player
+        }
+
+        // Course Functions
+        function enrollCourse(courseId) {
+            showNotification('Redirection vers la page de paiement...', 'info');
+            // In production, redirect to payment
+        }
+
+        function viewCourseDetails(courseId) {
+            showNotification('Chargement des détails du cours...', 'info');
+        }
+
+        // Admin Functions
+        function showAdminTab(tabName) {
+            document.querySelectorAll('.admin-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            event.target.classList.add('active');
+
+            document.querySelectorAll('.admin-section').forEach(section => {
+                section.classList.remove('active');
+            });
+            document.getElementById('admin' + tabName.charAt(0).toUpperCase() + tabName.slice(1)).classList.add('active');
+        }
+
+        // Modal Functions
+        function showModal(type) {
+            const modal = document.getElementById('modal');
+            const modalTitle = document.getElementById('modalTitle');
+            const modalBody = document.getElementById('modalBody');
+
+            if (type === 'addUser') {
+                modalTitle.textContent = 'Ajouter un utilisateur';
+                modalBody.innerHTML = `
+                    <form onsubmit="handleAddUser(event)">
+                        <div class="form-group">
+                            <label class="form-label">Nom complet</label>
+                            <input type="text" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Email</label>
+                            <input type="email" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Rôle</label>
+                            <select class="form-control" required>
+                                <option value="student">Étudiant</option>
+                                <option value="instructor">Formateur</option>
+                                <option value="admin">Administrateur</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Ajouter</button>
+                    </form>
+                `;
+            }
+
+            modal.classList.add('active');
+        }
+
+        function closeModal() {
+            document.getElementById('modal').classList.remove('active');
+        }
+
+        function handleAddUser(event) {
+            event.preventDefault();
+            showNotification('Utilisateur ajouté avec succès !', 'success');
+            closeModal();
+        }
+
+        // Notification System
+        function showNotification(message, type = 'info') {
+            const notification = document.createElement('div');
+            notification.className = `notification ${type}`;
+            notification.textContent = message;
+            document.body.appendChild(notification);
+
+            setTimeout(() => {
+                notification.remove();
+            }, 4000);
+        }
+
+        // Register Function
+        function showRegister() {
+            showNotification('Contactez l\'administrateur pour créer un compte', 'info');
+        }
+    </script>
+</body>
+</html>
